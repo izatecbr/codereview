@@ -1,0 +1,1 @@
+Pasta dedicada a documentacao/especificacao de nosso sistema
