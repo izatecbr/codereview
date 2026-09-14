@@ -13,7 +13,4 @@ public class Cadastro {
     private String documento;
     private LocalDate aniversario;
     private String email;
-    //private Endereco endereco;
-    //private Celular celular;
-
 }
