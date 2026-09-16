@@ -8,15 +8,18 @@ import java.util.List;
 public class Exemplo {
     public static void main(String[] args) throws SQLException {
 
-       /* Cadastro cadastro = new Cadastro();
+       Cadastro cadastro = new Cadastro();
         cadastro.setId(1);
-        cadastro.setNome("João da Silva Lima");
+        cadastro.setNome("Gleyson");
         cadastro.setCpfCnpj("123.456.789-00");
         cadastro.setDocumento("RG 1234567");
         cadastro.setAniversario(java.time.LocalDate.of(1990, 5, 15));
-        cadastro.setEmail("joaosilva@gmail.com");*/
+        cadastro.setEmail("joaosilva@gmail.com");
 
         CadastroDAO repository = new CadastroDAO();
+        repository.incluir(cadastro);
+
+        /*
         List<Cadastro> cadastros = repository.listarTodos();
 
         for (Cadastro cadastro : cadastros) {
@@ -30,6 +33,8 @@ public class Exemplo {
 
             System.out.println("-----------------------------");
         }
+
+         */
 
     }
 }
