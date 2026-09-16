@@ -1,6 +1,8 @@
-package sis.pousada.modelo;
+package sis.pousada;
 
 import sis.pousada.dao.CadastroDAO;
+import sis.pousada.dao.CadastroJPA;
+import sis.pousada.modelo.Cadastro;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -8,19 +10,18 @@ import java.util.List;
 public class Exemplo {
     public static void main(String[] args) throws SQLException {
 
-       Cadastro cadastro = new Cadastro();
-        cadastro.setId(1);
+  /*      Cadastro cadastro = new Cadastro();
         cadastro.setNome("Gleyson");
         cadastro.setCpfCnpj("123.456.789-00");
         cadastro.setDocumento("RG 1234567");
         cadastro.setAniversario(java.time.LocalDate.of(1990, 5, 15));
-        cadastro.setEmail("joaosilva@gmail.com");
+        cadastro.setEmail("joaosilva@gmail.com");*/
 
-        CadastroDAO repository = new CadastroDAO();
-        repository.incluir(cadastro);
+        CadastroJPA repository = new CadastroJPA();
+        //repository.incluir(cadastro);
 
-        /*
-        List<Cadastro> cadastros = repository.listarTodos();
+
+        List<Cadastro> cadastros = repository.listar();
 
         for (Cadastro cadastro : cadastros) {
 
@@ -34,7 +35,7 @@ public class Exemplo {
             System.out.println("-----------------------------");
         }
 
-         */
+
 
     }
 }
