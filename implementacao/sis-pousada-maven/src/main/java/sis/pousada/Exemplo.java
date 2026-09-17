@@ -13,7 +13,7 @@ public class Exemplo {
     public static void main(String[] args) throws SQLException {
 
         Cadastro cadastro = new Cadastro();
-        cadastro.setNome("Gleyson");
+        cadastro.setNome("Izabelly");
         cadastro.setCpfCnpj("123.456.789-00");
         cadastro.setDocumento("RG 1234567");
         cadastro.setAniversario(java.time.LocalDate.of(1990, 5, 15));
