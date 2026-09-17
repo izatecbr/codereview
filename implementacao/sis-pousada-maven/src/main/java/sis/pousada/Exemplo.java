@@ -3,6 +3,8 @@ package sis.pousada;
 import sis.pousada.dao.CadastroDAO;
 import sis.pousada.dao.CadastroJPA;
 import sis.pousada.modelo.Cadastro;
+import sis.pousada.modelo.Celular;
+import sis.pousada.modelo.Endereco;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -10,30 +12,32 @@ import java.util.List;
 public class Exemplo {
     public static void main(String[] args) throws SQLException {
 
-  /*      Cadastro cadastro = new Cadastro();
+        Cadastro cadastro = new Cadastro();
         cadastro.setNome("Gleyson");
         cadastro.setCpfCnpj("123.456.789-00");
         cadastro.setDocumento("RG 1234567");
         cadastro.setAniversario(java.time.LocalDate.of(1990, 5, 15));
-        cadastro.setEmail("joaosilva@gmail.com");*/
+        cadastro.setEmail("joaosilva@gmail.com");
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Rua das Flores");
+        endereco.setNumero("123");
+        endereco.setComplemento("Apto 101");
+        endereco.setBairro("Centro");
+        endereco.setCidade("São Paulo");
+        endereco.setUf("SP");
+        endereco.setCep(12345678);
+        endereco.setIbge(1234567);
+
+        Celular celular = new Celular();
+        celular.setNumero(11987654321L);
+        celular.setWhatsapp(true);
+
+        cadastro.setEndereco(endereco);
+        cadastro.setCelular(celular);
 
         CadastroJPA repository = new CadastroJPA();
-        //repository.incluir(cadastro);
-
-
-        List<Cadastro> cadastros = repository.listar();
-
-        for (Cadastro cadastro : cadastros) {
-
-            System.out.println("ID: " + cadastro.getId());
-            System.out.println("Nome: " + cadastro.getNome());
-            System.out.println("CPF/CNPJ: " + cadastro.getCpfCnpj());
-            System.out.println("Documento: " + cadastro.getDocumento());
-            System.out.println("Aniversário: " + cadastro.getAniversario());
-            System.out.println("E-mail: " + cadastro.getEmail());
-
-            System.out.println("-----------------------------");
-        }
+        repository.incluir(cadastro);
 
 
 
