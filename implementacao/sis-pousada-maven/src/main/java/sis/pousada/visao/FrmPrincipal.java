@@ -52,8 +52,4 @@ public class FrmPrincipal extends JFrame {
         } catch (PropertyVetoException ignored) {
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new FrmPrincipal().setVisible(true));
-    }
 }

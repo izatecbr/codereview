@@ -2,8 +2,8 @@ package sis.pousada.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import sis.pousada.modelo.Cadastro;
+import sis.pousada.utilidade.FabricaEntityManager;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class CadastroJPA {
     private final EntityManagerFactory emf;
 
     public CadastroJPA() {
-        this.emf = Persistence.createEntityManagerFactory("PU_SIS_POUSADA");
+        this.emf = FabricaEntityManager.getEntityManagerFactory();
     }
 
     public Cadastro incluir(Cadastro cadastro) {
@@ -66,9 +66,4 @@ public class CadastroJPA {
         }
     }
 
-    public void fechar() {
-        if (emf.isOpen()) {
-            emf.close();
-        }
-    }
 }
