@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class FrmCadastroCliente extends JFrame {
+public class FrmCadastroCliente extends JInternalFrame {
 
     private final JTextField txtNome = new JTextField();
     private final JTextField txtCpfCnpj = new JTextField();
@@ -35,7 +35,11 @@ public class FrmCadastroCliente extends JFrame {
 
     public FrmCadastroCliente() {
         setTitle("Tela de Cadastro");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+        setClosable(true);
+        setMaximizable(true);
+        setIconifiable(true);
+        setResizable(true);
 
         JPanel painelCampos = new JPanel(new GridLayout(0, 2, 5, 5));
         painelCampos.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -84,7 +88,7 @@ public class FrmCadastroCliente extends JFrame {
         add(painelBotoes, BorderLayout.SOUTH);
 
         pack();
-        setLocationRelativeTo(null);
+        setLocation(20, 20);
     }
 
     private void salvar() {
@@ -146,9 +150,5 @@ public class FrmCadastroCliente extends JFrame {
         }) {
             campo.setText("");
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new FrmCadastroCliente().setVisible(true));
     }
 }
