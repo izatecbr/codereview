@@ -32,9 +32,15 @@ public class FrmCadastroCliente extends JInternalFrame {
     private final JTextField txtWhatsapp = new JTextField();
 
     private final CadastroJPA cadastroJPA = new CadastroJPA();
+    private final Cadastro cadastroEdicao;
 
     public FrmCadastroCliente() {
-        setTitle("Tela de Cadastro");
+        this(null);
+    }
+
+    public FrmCadastroCliente(Cadastro cadastroEdicao) {
+        this.cadastroEdicao = cadastroEdicao;
+        setTitle(cadastroEdicao == null ? "Tela de Cadastro" : "Alteração de Cadastro");
         setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
         setClosable(true);
         setMaximizable(true);
@@ -89,11 +95,47 @@ public class FrmCadastroCliente extends JInternalFrame {
 
         pack();
         setLocation(20, 20);
+
+        if (cadastroEdicao != null) {
+            preencherCampos(cadastroEdicao);
+        }
+    }
+
+    private void preencherCampos(Cadastro cadastro) {
+        txtNome.setText(cadastro.getNome());
+        txtCpfCnpj.setText(cadastro.getCpfCnpj());
+        txtDocumento.setText(cadastro.getDocumento());
+        txtEmail.setText(cadastro.getEmail());
+
+        if (cadastro.getAniversario() != null) {
+            txtAniversario.setText(cadastro.getAniversario().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        }
+
+        Endereco endereco = cadastro.getEndereco();
+        if (endereco != null) {
+            txtLogradouro.setText(endereco.getLogradouro());
+            txtNumero.setText(endereco.getNumero());
+            txtComplemento.setText(endereco.getComplemento());
+            txtBairro.setText(endereco.getBairro());
+            txtCidade.setText(endereco.getCidade());
+            txtUf.setText(endereco.getUf());
+            txtCep.setText(endereco.getCep() == null ? "" : String.valueOf(endereco.getCep()));
+            txtIbge.setText(endereco.getIbge() == null ? "" : String.valueOf(endereco.getIbge()));
+        }
+
+        Celular celular = cadastro.getCelular();
+        if (celular != null) {
+            txtCelular.setText(celular.getNumero() == null ? "" : String.valueOf(celular.getNumero()));
+            txtWhatsapp.setText(celular.isWhatsapp() ? "S" : "N");
+        }
     }
 
     private void salvar() {
         try {
             Cadastro cadastro = new Cadastro();
+            if (cadastroEdicao != null) {
+                cadastro.setId(cadastroEdicao.getId());
+            }
             cadastro.setNome(txtNome.getText());
             cadastro.setCpfCnpj(txtCpfCnpj.getText());
             cadastro.setDocumento(txtDocumento.getText());
@@ -126,10 +168,15 @@ public class FrmCadastroCliente extends JInternalFrame {
             celular.setWhatsapp(txtWhatsapp.getText().trim().equalsIgnoreCase("S"));
             cadastro.setCelular(celular);
 
-            cadastroJPA.incluir(cadastro);
-
-            JOptionPane.showMessageDialog(this, "Cadastro salvo com sucesso!");
-            limparCampos();
+            if (cadastroEdicao == null) {
+                cadastroJPA.incluir(cadastro);
+                JOptionPane.showMessageDialog(this, "Cadastro salvo com sucesso!");
+                limparCampos();
+            } else {
+                cadastroJPA.alterar(cadastro);
+                JOptionPane.showMessageDialog(this, "Cadastro alterado com sucesso!");
+                dispose();
+            }
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(this, "Data de aniversário inválida. Use o formato dd/MM/yyyy.",
                     "Erro", JOptionPane.ERROR_MESSAGE);

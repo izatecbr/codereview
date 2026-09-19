@@ -4,6 +4,8 @@ import sis.pousada.dao.CadastroJPA;
 import sis.pousada.modelo.Cadastro;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
@@ -68,7 +70,18 @@ public class FrmConsultaCliente extends JInternalFrame {
     }
 
     private void novo() {
-        JInternalFrame frame = new FrmCadastroCliente();
+        abrirCadastro(new FrmCadastroCliente());
+    }
+
+    private void abrirCadastro(FrmCadastroCliente frame) {
+        frame.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosed(InternalFrameEvent e) {
+                if (!txtNome.getText().isBlank() || modelo.getRowCount() > 0) {
+                    buscar();
+                }
+            }
+        });
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }
@@ -82,8 +95,7 @@ public class FrmConsultaCliente extends JInternalFrame {
         }
 
         Cadastro selecionado = modelo.getCadastro(tabela.convertRowIndexToModel(linha));
-        JOptionPane.showMessageDialog(this,
-                "Alteração do cadastro " + selecionado.getId() + " ainda não implementada.");
+        abrirCadastro(new FrmCadastroCliente(selecionado));
     }
 
     private static class CadastroTableModel extends AbstractTableModel {
