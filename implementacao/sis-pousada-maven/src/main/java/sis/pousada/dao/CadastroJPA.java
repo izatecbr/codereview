@@ -53,6 +53,21 @@ public class CadastroJPA {
         }
     }
 
+    public List<Cadastro> listarPorNome(String nome) {
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            String filtro = "%" + (nome == null ? "" : nome.trim()) + "%";
+
+            return em.createQuery(
+                    "SELECT c FROM Cadastro c WHERE LOWER(c.nome) LIKE LOWER(:nome) ORDER BY c.nome",
+                    Cadastro.class
+            ).setParameter("nome", filtro).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Cadastro> listar() {
         EntityManager em = emf.createEntityManager();
 

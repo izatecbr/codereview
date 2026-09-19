@@ -22,22 +22,22 @@ public class FrmPrincipal extends JFrame {
 
         JMenu menuCadastros = new JMenu("Cadastros");
         JMenuItem itemCliente = new JMenuItem("Cliente");
-        itemCliente.addActionListener(e -> abrirCadastroCliente());
+        itemCliente.addActionListener(e -> abrirConsultaCliente());
         menuCadastros.add(itemCliente);
 
         menuBar.add(menuCadastros);
         return menuBar;
     }
 
-    private void abrirCadastroCliente() {
+    private void abrirConsultaCliente() {
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
-            if (frame instanceof FrmCadastroCliente) {
+            if (frame instanceof FrmConsultaCliente) {
                 trazerParaFrente(frame);
                 return;
             }
         }
 
-        JInternalFrame frame = new FrmCadastroCliente();
+        JInternalFrame frame = new FrmConsultaCliente();
         desktopPane.add(frame);
         frame.setVisible(true);
         trazerParaFrente(frame);
