@@ -12,6 +12,8 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(new Thread(FabricaEntityManager::finalizar));
 
         SwingUtilities.invokeLater(() -> {
+            aplicarLookAndFeel();
+
             FrmSplash splash = new FrmSplash();
             splash.setVisible(true);
 
@@ -30,5 +32,13 @@ public class Main {
             };
             inicializacao.execute();
         });
+    }
+
+    private static void aplicarLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Não foi possível aplicar o look and feel do sistema: " + e.getMessage());
+        }
     }
 }
