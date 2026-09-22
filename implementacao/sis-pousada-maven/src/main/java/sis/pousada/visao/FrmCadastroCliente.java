@@ -1,9 +1,9 @@
 package sis.pousada.visao;
 
 import sis.pousada.dao.CadastroJPA;
-import sis.pousada.modelo.Cadastro;
-import sis.pousada.modelo.Celular;
-import sis.pousada.modelo.Endereco;
+import sis.pousada.modelo.cadastro.Cadastro;
+import sis.pousada.modelo.cadastro.Celular;
+import sis.pousada.modelo.cadastro.Endereco;
 
 import javax.swing.*;
 import java.awt.*;

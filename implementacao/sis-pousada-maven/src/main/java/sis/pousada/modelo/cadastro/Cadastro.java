@@ -1,4 +1,4 @@
-package sis.pousada.modelo;
+package sis.pousada.modelo.cadastro;
 
 import jakarta.persistence.*;
 import lombok.Getter;

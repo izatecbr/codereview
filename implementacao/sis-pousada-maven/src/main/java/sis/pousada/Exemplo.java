@@ -1,13 +1,11 @@
 package sis.pousada;
 
-import sis.pousada.dao.CadastroDAO;
 import sis.pousada.dao.CadastroJPA;
-import sis.pousada.modelo.Cadastro;
-import sis.pousada.modelo.Celular;
-import sis.pousada.modelo.Endereco;
+import sis.pousada.modelo.cadastro.Cadastro;
+import sis.pousada.modelo.cadastro.Celular;
+import sis.pousada.modelo.cadastro.Endereco;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class Exemplo {
     public static void main(String[] args) throws SQLException {

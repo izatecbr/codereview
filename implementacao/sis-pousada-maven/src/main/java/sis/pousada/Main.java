@@ -1,9 +1,8 @@
 package sis.pousada;
 
 import sis.pousada.utilidade.FabricaEntityManager;
-import sis.pousada.visao.FrmPrincipal;
 import sis.pousada.visao.FrmSplash;
-
+import sis.pousada.visao.FrmPrincipal;
 import javax.swing.*;
 
 public class Main {

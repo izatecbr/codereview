@@ -2,7 +2,7 @@ package sis.pousada.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import sis.pousada.modelo.Cadastro;
+import sis.pousada.modelo.cadastro.Cadastro;
 import sis.pousada.utilidade.FabricaEntityManager;
 
 import java.util.List;

@@ -1,5 +1,5 @@
 package sis.pousada.dao;
-import sis.pousada.modelo.Cadastro;
+import sis.pousada.modelo.cadastro.Cadastro;
 import sis.pousada.utilidade.FabricaConexao;
 
 import java.sql.Connection;

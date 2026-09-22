@@ -1,7 +1,7 @@
 package sis.pousada.visao;
 
 import sis.pousada.dao.CadastroJPA;
-import sis.pousada.modelo.Cadastro;
+import sis.pousada.modelo.cadastro.Cadastro;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
