@@ -24,7 +24,7 @@ public class Acomodacao {
     @Column(name = "tipo", nullable = false, length = 10)
     private AcomodacaoTipo tipo;
     //@Transient
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "item",nullable = false, length = 30)
     @CollectionTable(
             name = "tab_acomodacao_item",  // Nome da tabela que armazenará os emails

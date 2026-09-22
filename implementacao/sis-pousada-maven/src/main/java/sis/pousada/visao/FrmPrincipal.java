@@ -23,21 +23,32 @@ public class FrmPrincipal extends JFrame {
         JMenu menuCadastros = new JMenu("Cadastros");
         JMenuItem itemCliente = new JMenuItem("Cliente");
         itemCliente.addActionListener(e -> abrirConsultaCliente());
+        JMenuItem itemAcomodacao = new JMenuItem("Acomodação");
+        itemAcomodacao.addActionListener(e -> abrirConsultaAcomodacao());
         menuCadastros.add(itemCliente);
+        menuCadastros.add(itemAcomodacao);
 
         menuBar.add(menuCadastros);
         return menuBar;
     }
 
     private void abrirConsultaCliente() {
+        abrirUnica(FrmConsultaCliente.class, FrmConsultaCliente::new);
+    }
+
+    private void abrirConsultaAcomodacao() {
+        abrirUnica(FrmConsultaAcomodacao.class, FrmConsultaAcomodacao::new);
+    }
+
+    private void abrirUnica(Class<? extends JInternalFrame> tipo, java.util.function.Supplier<JInternalFrame> fabrica) {
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
-            if (frame instanceof FrmConsultaCliente) {
+            if (tipo.isInstance(frame)) {
                 trazerParaFrente(frame);
                 return;
             }
         }
 
-        JInternalFrame frame = new FrmConsultaCliente();
+        JInternalFrame frame = fabrica.get();
         desktopPane.add(frame);
         frame.setVisible(true);
         trazerParaFrente(frame);
