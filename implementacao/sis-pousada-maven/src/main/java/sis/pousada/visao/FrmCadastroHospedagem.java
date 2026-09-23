@@ -33,7 +33,6 @@ public class FrmCadastroHospedagem extends JInternalFrame {
 
     private final JComboBox<Cadastro> cbHospede = new JComboBox<>();
     private final JComboBox<Acomodacao> cbAcomodacao = new JComboBox<>();
-    private final JTextField txtNumero = new JTextField();
     private final JTextField txtDataInicial = new JTextField();
     private final JTextField txtDataFinal = new JTextField();
     private final JComboBox<HospedagamStatus> cbStatus;
@@ -68,7 +67,8 @@ public class FrmCadastroHospedagem extends JInternalFrame {
                 HospedagamStatus.CANCELADA});
 
         cbHospede.setRenderer(rotulo(Cadastro.class, Cadastro::getNome));
-        cbAcomodacao.setRenderer(rotulo(Acomodacao.class, Acomodacao::getLegenda));
+        cbAcomodacao.setRenderer(rotulo(Acomodacao.class,
+                a -> a.getNumero() == null ? a.getLegenda() : a.getLegenda() + " - " + a.getNumero()));
         txtValorTotal.setEditable(false);
 
         carregarCombos();
@@ -81,8 +81,6 @@ public class FrmCadastroHospedagem extends JInternalFrame {
         if (!reserva) {
             painelCampos.add(new JLabel("Acomodação:"));
             painelCampos.add(cbAcomodacao);
-            painelCampos.add(new JLabel("Número da unidade:"));
-            painelCampos.add(txtNumero);
         }
         painelCampos.add(new JLabel("Data inicial (dd/MM/yyyy):"));
         painelCampos.add(txtDataInicial);
@@ -163,10 +161,10 @@ public class FrmCadastroHospedagem extends JInternalFrame {
                 acomodacao = new Acomodacao();
                 acomodacao.setId(unidade.getId());
                 acomodacao.setLegenda(unidade.getLegenda());
+                acomodacao.setNumero(unidade.getNumero());
                 cbAcomodacao.addItem(acomodacao);
             }
             cbAcomodacao.setSelectedItem(acomodacao);
-            txtNumero.setText(unidade.getNumero());
         }
 
         Duracao duracao = hospedagem.getDuracao();
@@ -210,18 +208,19 @@ public class FrmCadastroHospedagem extends JInternalFrame {
         return hospedagem;
     }
 
-    // Se a acomodação não mudou, mantém legenda/diária já gravadas na hospedagem.
+    // Se a acomodação não mudou, mantém legenda/número/diária já gravados na hospedagem.
     private UnidadeLocacao montarUnidade(Acomodacao acomodacao) {
         UnidadeLocacao gravada = hospedagemEdicao == null ? null : hospedagemEdicao.getUnidadeLocacao();
 
         UnidadeLocacao unidade = new UnidadeLocacao();
         unidade.setId(acomodacao.getId());
-        unidade.setNumero(txtNumero.getText().trim());
         if (gravada != null && acomodacao.getId().equals(gravada.getId())) {
             unidade.setLegenda(gravada.getLegenda());
+            unidade.setNumero(gravada.getNumero());
             unidade.setValorDiaria(gravada.getValorDiaria());
         } else {
             unidade.setLegenda(acomodacao.getLegenda());
+            unidade.setNumero(acomodacao.getNumero());
             unidade.setValorDiaria(acomodacao.getValorDiaria());
         }
         return unidade;
@@ -267,7 +266,6 @@ public class FrmCadastroHospedagem extends JInternalFrame {
     private void limparCampos() {
         cbHospede.setSelectedIndex(-1);
         cbAcomodacao.setSelectedIndex(-1);
-        txtNumero.setText("");
         txtDataInicial.setText("");
         txtDataFinal.setText("");
         cbStatus.setSelectedIndex(0);

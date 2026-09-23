@@ -100,7 +100,7 @@ public class FrmConsultaAcomodacao extends JInternalFrame {
 
     private static class AcomodacaoTableModel extends AbstractTableModel {
 
-        private static final String[] COLUNAS = {"Id", "Legenda", "Tipo", "Valor diária"};
+        private static final String[] COLUNAS = {"Id", "Legenda", "Número", "Tipo", "Valor diária"};
 
         private List<Acomodacao> acomodacoes = new ArrayList<>();
 
@@ -134,8 +134,9 @@ public class FrmConsultaAcomodacao extends JInternalFrame {
             return switch (coluna) {
                 case 0 -> a.getId();
                 case 1 -> a.getLegenda();
-                case 2 -> a.getTipo() == null ? null : a.getTipo().getDescricao();
-                case 3 -> a.getValorDiaria();
+                case 2 -> a.getNumero();
+                case 3 -> a.getTipo() == null ? null : a.getTipo().getDescricao();
+                case 4 -> a.getValorDiaria();
                 default -> null;
             };
         }

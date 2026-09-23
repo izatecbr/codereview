@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class FrmCadastroAcomodacao extends JInternalFrame {
 
     private final JTextField txtLegenda = new JTextField();
+    private final JTextField txtNumero = new JTextField();
     private final JTextField txtDescricao = new JTextField();
     private final JTextField txtValorDiaria = new JTextField();
     private final JComboBox<AcomodacaoTipo> cbTipo = new JComboBox<>(AcomodacaoTipo.values());
@@ -40,6 +41,8 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
 
         painelCampos.add(new JLabel("Legenda:"));
         painelCampos.add(txtLegenda);
+        painelCampos.add(new JLabel("Número:"));
+        painelCampos.add(txtNumero);
         painelCampos.add(new JLabel("Descrição:"));
         painelCampos.add(txtDescricao);
         painelCampos.add(new JLabel("Valor da diária:"));
@@ -78,7 +81,7 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
         add(painelItens, BorderLayout.CENTER);
         add(painelBotoes, BorderLayout.SOUTH);
 
-        setSize(420, 480);
+        setSize(420, 520);
         setLocation(20, 20);
 
         if (acomodacaoEdicao != null) {
@@ -107,6 +110,7 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
 
     private void preencherCampos(Acomodacao acomodacao) {
         txtLegenda.setText(acomodacao.getLegenda());
+        txtNumero.setText(acomodacao.getNumero());
         txtDescricao.setText(acomodacao.getDescricao());
         txtValorDiaria.setText(String.valueOf(acomodacao.getValorDiaria()));
         cbTipo.setSelectedItem(acomodacao.getTipo());
@@ -118,12 +122,19 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
     }
 
     private void salvar() {
+        if (txtNumero.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Informe o número da acomodação.",
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
             Acomodacao acomodacao = new Acomodacao();
             if (acomodacaoEdicao != null) {
                 acomodacao.setId(acomodacaoEdicao.getId());
             }
             acomodacao.setLegenda(txtLegenda.getText());
+            acomodacao.setNumero(txtNumero.getText().trim());
             acomodacao.setDescricao(txtDescricao.getText());
             acomodacao.setValorDiaria(Double.parseDouble(txtValorDiaria.getText().replace(",", ".")));
             acomodacao.setTipo((AcomodacaoTipo) cbTipo.getSelectedItem());
@@ -149,6 +160,7 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
 
     private void limparCampos() {
         txtLegenda.setText("");
+        txtNumero.setText("");
         txtDescricao.setText("");
         txtValorDiaria.setText("");
         txtItem.setText("");

@@ -79,7 +79,7 @@ public class HospedagemService {
         UnidadeLocacao unidade = hospedagem.getUnidadeLocacao();
         if (exigeUnidade && (unidade == null || unidade.getId() == null
                 || unidade.getNumero() == null || unidade.getNumero().isBlank())) {
-            throw new IllegalArgumentException("Informe a acomodação e o número da unidade.");
+            throw new IllegalArgumentException("Informe a acomodação (ela precisa ter número cadastrado).");
         }
     }
 }
