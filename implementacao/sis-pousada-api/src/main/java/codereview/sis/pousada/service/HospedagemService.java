@@ -1,10 +1,14 @@
 package codereview.sis.pousada.service;
 
+import codereview.sis.pousada.modelo.acomodacao.Acomodacao;
+import codereview.sis.pousada.modelo.cadastro.Cadastro;
 import codereview.sis.pousada.modelo.hospedagem.Duracao;
 import codereview.sis.pousada.modelo.hospedagem.HospedagamStatus;
 import codereview.sis.pousada.modelo.hospedagem.Hospedagem;
 import codereview.sis.pousada.modelo.hospedagem.Hospede;
 import codereview.sis.pousada.modelo.hospedagem.UnidadeLocacao;
+import codereview.sis.pousada.repository.AcomodacaoRepository;
+import codereview.sis.pousada.repository.CadastroRepository;
 import codereview.sis.pousada.repository.HospedagemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,24 +24,32 @@ public class HospedagemService {
             List.of(HospedagamStatus.HOSPEDADA, HospedagamStatus.FINALIZADA);
 
     private final HospedagemRepository hospedagemRepository;
+    private final CadastroRepository cadastroRepository;
+    private final AcomodacaoRepository acomodacaoRepository;
 
-    public HospedagemService(HospedagemRepository hospedagemRepository) {
+    public HospedagemService(HospedagemRepository hospedagemRepository,
+                             CadastroRepository cadastroRepository,
+                             AcomodacaoRepository acomodacaoRepository) {
         this.hospedagemRepository = hospedagemRepository;
+        this.cadastroRepository = cadastroRepository;
+        this.acomodacaoRepository = acomodacaoRepository;
     }
 
     @Transactional
     public Hospedagem incluir(Hospedagem hospedagem) {
-        prepararParaGravar(hospedagem);
+        prepararParaGravar(hospedagem, null);
         hospedagem.setId(null);
         return hospedagemRepository.save(hospedagem);
     }
 
     @Transactional
     public Hospedagem alterar(Hospedagem hospedagem) {
-        if (hospedagem.getId() == null || !hospedagemRepository.existsById(hospedagem.getId())) {
+        Hospedagem gravada = hospedagem.getId() == null ? null
+                : hospedagemRepository.findById(hospedagem.getId()).orElse(null);
+        if (gravada == null) {
             throw new NoSuchElementException("Hospedagem não encontrada.");
         }
-        prepararParaGravar(hospedagem);
+        prepararParaGravar(hospedagem, gravada.getUnidadeLocacao());
         return hospedagemRepository.save(hospedagem);
     }
 
@@ -73,13 +85,41 @@ public class HospedagemService {
         return nome == null ? "" : nome.trim();
     }
 
-    private void prepararParaGravar(Hospedagem hospedagem) {
-        validar(hospedagem);
-
+    private void prepararParaGravar(Hospedagem hospedagem, UnidadeLocacao unidadeGravada) {
         if (hospedagem.getStatus() == HospedagamStatus.RESERVADA) {
             hospedagem.setUnidadeLocacao(null);
         }
+        completarDados(hospedagem, unidadeGravada);
+        validar(hospedagem);
         hospedagem.setValorTotal(calcularValorTotal(hospedagem));
+    }
+
+    // A requisição informa só os códigos; nome, legenda, número e diária vêm dos cadastros existentes.
+    // Se a unidade não mudou em relação à já gravada, mantém o snapshot (legenda/número/diária).
+    private void completarDados(Hospedagem hospedagem, UnidadeLocacao unidadeGravada) {
+        Hospede hospede = hospedagem.getHospede();
+        if (hospede != null && hospede.getId() > 0) {
+            Cadastro cadastro = cadastroRepository.findById(hospede.getId())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Hóspede não encontrado (código " + hospede.getId() + ")."));
+            hospede.setNome(cadastro.getNome());
+        }
+
+        UnidadeLocacao unidade = hospedagem.getUnidadeLocacao();
+        if (unidade != null && unidade.getId() != null) {
+            if (unidadeGravada != null && unidade.getId().equals(unidadeGravada.getId())) {
+                unidade.setLegenda(unidadeGravada.getLegenda());
+                unidade.setNumero(unidadeGravada.getNumero());
+                unidade.setValorDiaria(unidadeGravada.getValorDiaria());
+            } else {
+                Acomodacao acomodacao = acomodacaoRepository.findById(unidade.getId())
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Acomodação não encontrada (código " + unidade.getId() + ")."));
+                unidade.setLegenda(acomodacao.getLegenda());
+                unidade.setNumero(acomodacao.getNumero());
+                unidade.setValorDiaria(acomodacao.getValorDiaria());
+            }
+        }
     }
 
     private void validar(Hospedagem hospedagem) {
