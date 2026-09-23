@@ -28,21 +28,36 @@ public class FrmPrincipal extends JFrame {
         menuCadastros.add(itemCliente);
         menuCadastros.add(itemAcomodacao);
 
+        JMenu menuHospedagem = new JMenu("Hospedagem");
+        JMenuItem itemReservas = new JMenuItem("Reservas");
+        itemReservas.addActionListener(e -> abrirConsultaHospedagem(true));
+        JMenuItem itemHospedagens = new JMenuItem("Hospedagens");
+        itemHospedagens.addActionListener(e -> abrirConsultaHospedagem(false));
+        menuHospedagem.add(itemReservas);
+        menuHospedagem.add(itemHospedagens);
+
         menuBar.add(menuCadastros);
+        menuBar.add(menuHospedagem);
         return menuBar;
     }
 
     private void abrirConsultaCliente() {
-        abrirUnica(FrmConsultaCliente.class, FrmConsultaCliente::new);
+        abrirUnica(frame -> frame instanceof FrmConsultaCliente, FrmConsultaCliente::new);
     }
 
     private void abrirConsultaAcomodacao() {
-        abrirUnica(FrmConsultaAcomodacao.class, FrmConsultaAcomodacao::new);
+        abrirUnica(frame -> frame instanceof FrmConsultaAcomodacao, FrmConsultaAcomodacao::new);
     }
 
-    private void abrirUnica(Class<? extends JInternalFrame> tipo, java.util.function.Supplier<JInternalFrame> fabrica) {
+    private void abrirConsultaHospedagem(boolean reserva) {
+        abrirUnica(frame -> frame instanceof FrmConsultaHospedagem consulta && consulta.isReserva() == reserva,
+                () -> new FrmConsultaHospedagem(reserva));
+    }
+
+    private void abrirUnica(java.util.function.Predicate<JInternalFrame> jaAberta,
+                            java.util.function.Supplier<JInternalFrame> fabrica) {
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
-            if (tipo.isInstance(frame)) {
+            if (jaAberta.test(frame)) {
                 trazerParaFrente(frame);
                 return;
             }

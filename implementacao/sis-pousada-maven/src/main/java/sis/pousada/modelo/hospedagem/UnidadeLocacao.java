@@ -10,11 +10,11 @@ import lombok.Setter;
 @Embeddable
 public class UnidadeLocacao {
     @Column(name = "ul_id")
-    private int id;
+    private Integer id;
     @Column(name = "ul_legenda")
     private String legenda;
     @Column(name = "ul_vl_diaria")
-    private double valorDiaria;
+    private Double valorDiaria;
     @Column(name = "ul_numero")
     private String numero;
 }
