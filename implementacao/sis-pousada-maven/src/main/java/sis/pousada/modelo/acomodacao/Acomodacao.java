@@ -31,4 +31,6 @@ public class Acomodacao {
             joinColumns = @JoinColumn(name = "acomodacao_id")  // Coluna que faz a relação com a tabela Cliente
     )
     private List<String> itens;
+    private String numero;
+    private boolean ocupada;
 }
