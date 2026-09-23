@@ -3,8 +3,6 @@ package codereview.sis.pousada.modelo.cadastro;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import sis.pousada.modelo.cadastro.Celular;
-import sis.pousada.modelo.cadastro.Endereco;
 
 import java.time.LocalDate;
 @Getter
