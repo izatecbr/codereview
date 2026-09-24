@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,6 +92,15 @@ public class HospedagemController {
     public Hospedagem criarHospedagem(@RequestBody Hospedagem hospedagem) {
         hospedagem.setStatus(HospedagamStatus.HOSPEDADA);
         return hospedagemService.incluir(hospedagem);
+    }
+
+    @Operation(summary = "Alterar reserva/hospedagem",
+            description = "O código vem da URL. Informe o status (RESERVADA, HOSPEDADA, FINALIZADA ou CANCELADA): "
+                    + "para fazer o check-in de uma reserva envie HOSPEDADA com unidadeLocacao.id.")
+    @PutMapping("/{id}")
+    public Hospedagem alterar(@PathVariable Integer id, @RequestBody Hospedagem hospedagem) {
+        hospedagem.setId(id);
+        return hospedagemService.alterar(hospedagem);
     }
 
     @Operation(summary = "Listar hospedagens", description = "Hospedagens em andamento e finalizadas. " + DESCRICAO_FILTROS)

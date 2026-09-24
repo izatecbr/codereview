@@ -1,7 +1,6 @@
 package sis.pousada.visao;
 
-import sis.pousada.dao.AcomodacaoJPA;
-import sis.pousada.dao.CadastroJPA;
+import sis.pousada.api.ApiException;
 import sis.pousada.modelo.acomodacao.Acomodacao;
 import sis.pousada.modelo.cadastro.Cadastro;
 import sis.pousada.modelo.hospedagem.Duracao;
@@ -9,6 +8,8 @@ import sis.pousada.modelo.hospedagem.HospedagamStatus;
 import sis.pousada.modelo.hospedagem.Hospedagem;
 import sis.pousada.modelo.hospedagem.Hospede;
 import sis.pousada.modelo.hospedagem.UnidadeLocacao;
+import sis.pousada.service.AcomodacaoService;
+import sis.pousada.service.CadastroService;
 import sis.pousada.service.HospedagemService;
 
 import javax.swing.*;
@@ -38,8 +39,8 @@ public class FrmCadastroHospedagem extends JInternalFrame {
     private final JComboBox<HospedagamStatus> cbStatus;
     private final JTextField txtValorTotal = new JTextField();
 
-    private final CadastroJPA cadastroJPA = new CadastroJPA();
-    private final AcomodacaoJPA acomodacaoJPA = new AcomodacaoJPA();
+    private final CadastroService cadastroService = new CadastroService();
+    private final AcomodacaoService acomodacaoService = new AcomodacaoService();
     private final HospedagemService service = new HospedagemService();
 
     private final boolean reserva;
@@ -61,10 +62,13 @@ public class FrmCadastroHospedagem extends JInternalFrame {
         setIconifiable(true);
         setResizable(true);
 
-        cbStatus = new JComboBox<>(reserva
+        HospedagamStatus[] opcoesStatus = reserva
                 ? new HospedagamStatus[]{HospedagamStatus.RESERVADA, HospedagamStatus.CANCELADA}
                 : new HospedagamStatus[]{HospedagamStatus.HOSPEDADA, HospedagamStatus.FINALIZADA,
-                HospedagamStatus.CANCELADA});
+                HospedagamStatus.CANCELADA};
+        // Na inclusão a API define o status inicial (RESERVADA ou HOSPEDADA); as demais opções só valem na alteração.
+        cbStatus = new JComboBox<>(hospedagemEdicao == null
+                ? new HospedagamStatus[]{opcoesStatus[0]} : opcoesStatus);
 
         cbHospede.setRenderer(rotulo(Cadastro.class, Cadastro::getNome));
         cbAcomodacao.setRenderer(rotulo(Acomodacao.class,
@@ -117,9 +121,9 @@ public class FrmCadastroHospedagem extends JInternalFrame {
 
     private void carregarCombos() {
         try {
-            cadastroJPA.listarPorNome("").forEach(cbHospede::addItem);
+            cadastroService.listarPorNome("").forEach(cbHospede::addItem);
             if (!reserva) {
-                acomodacaoJPA.listar().forEach(cbAcomodacao::addItem);
+                acomodacaoService.listar().forEach(cbAcomodacao::addItem);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar hóspedes/acomodações: " + ex.getMessage(),
@@ -255,8 +259,9 @@ public class FrmCadastroHospedagem extends JInternalFrame {
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(this, "Data inválida. Use o formato dd/MM/yyyy.",
                     "Erro", JOptionPane.ERROR_MESSAGE);
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Atenção", JOptionPane.WARNING_MESSAGE);
+        } catch (ApiException ex) {
+            int tipo = ex.isRequisicaoInvalida() ? JOptionPane.WARNING_MESSAGE : JOptionPane.ERROR_MESSAGE;
+            JOptionPane.showMessageDialog(this, ex.getMessage(), ex.isRequisicaoInvalida() ? "Atenção" : "Erro", tipo);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);

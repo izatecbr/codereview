@@ -1,6 +1,6 @@
 package sis.pousada.visao;
 
-import sis.pousada.dao.CadastroJPA;
+import sis.pousada.service.CadastroService;
 import sis.pousada.modelo.cadastro.Cadastro;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class FrmConsultaCliente extends JInternalFrame {
     private final CadastroTableModel modelo = new CadastroTableModel();
     private final JTable tabela = new JTable(modelo);
 
-    private final CadastroJPA cadastroJPA = new CadastroJPA();
+    private final CadastroService cadastroService = new CadastroService();
 
     public FrmConsultaCliente() {
         setTitle("Consulta de Clientes");
@@ -62,7 +62,7 @@ public class FrmConsultaCliente extends JInternalFrame {
 
     private void buscar() {
         try {
-            modelo.setCadastros(cadastroJPA.listarPorNome(txtNome.getText()));
+            modelo.setCadastros(cadastroService.listarPorNome(txtNome.getText()));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao consultar cadastros: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);

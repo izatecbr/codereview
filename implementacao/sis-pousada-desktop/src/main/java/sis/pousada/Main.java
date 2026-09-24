@@ -1,36 +1,56 @@
 package sis.pousada;
 
-import sis.pousada.utilidade.FabricaEntityManager;
-import sis.pousada.visao.FrmSplash;
+import sis.pousada.api.ApiClient;
 import sis.pousada.visao.FrmPrincipal;
+import sis.pousada.visao.FrmSplash;
+
 import javax.swing.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        Runtime.getRuntime().addShutdownHook(new Thread(FabricaEntityManager::finalizar));
-
         SwingUtilities.invokeLater(() -> {
             aplicarLookAndFeel();
-
-            FrmSplash splash = new FrmSplash();
-            splash.setVisible(true);
-
-            SwingWorker<Void, Void> inicializacao = new SwingWorker<>() {
-                @Override
-                protected Void doInBackground() {
-                    FabricaEntityManager.inicializar();
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    splash.dispose();
-                    new FrmPrincipal().setVisible(true);
-                }
-            };
-            inicializacao.execute();
+            iniciar();
         });
+    }
+
+    private static void iniciar() {
+        FrmSplash splash = new FrmSplash();
+        splash.setVisible(true);
+
+        SwingWorker<Void, Void> conexao = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                ApiClient.instancia().verificarConexao();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                splash.dispose();
+                try {
+                    get();
+                    new FrmPrincipal().setVisible(true);
+                } catch (Exception e) {
+                    tratarFalhaDeConexao(e.getCause() != null ? e.getCause() : e);
+                }
+            }
+        };
+        conexao.execute();
+    }
+
+    private static void tratarFalhaDeConexao(Throwable causa) {
+        Object[] opcoes = {"Tentar novamente", "Sair"};
+        int escolha = JOptionPane.showOptionDialog(null,
+                causa.getMessage() + "\nVerifique se a API está em execução.",
+                "API indisponível", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                null, opcoes, opcoes[0]);
+        if (escolha == 0) {
+            iniciar();
+        } else {
+            System.exit(0);
+        }
     }
 
     private static void aplicarLookAndFeel() {

@@ -1,6 +1,6 @@
 package sis.pousada.visao;
 
-import sis.pousada.dao.CadastroJPA;
+import sis.pousada.service.CadastroService;
 import sis.pousada.modelo.cadastro.Cadastro;
 import sis.pousada.modelo.cadastro.Celular;
 import sis.pousada.modelo.cadastro.Endereco;
@@ -31,7 +31,7 @@ public class FrmCadastroCliente extends JInternalFrame {
     private final JTextField txtCelular = new JTextField();
     private final JTextField txtWhatsapp = new JTextField();
 
-    private final CadastroJPA cadastroJPA = new CadastroJPA();
+    private final CadastroService cadastroService = new CadastroService();
     private final Cadastro cadastroEdicao;
 
     public FrmCadastroCliente() {
@@ -169,11 +169,11 @@ public class FrmCadastroCliente extends JInternalFrame {
             cadastro.setCelular(celular);
 
             if (cadastroEdicao == null) {
-                cadastroJPA.incluir(cadastro);
+                cadastroService.incluir(cadastro);
                 JOptionPane.showMessageDialog(this, "Cadastro salvo com sucesso!");
                 limparCampos();
             } else {
-                cadastroJPA.alterar(cadastro);
+                cadastroService.alterar(cadastro);
                 JOptionPane.showMessageDialog(this, "Cadastro alterado com sucesso!");
                 dispose();
             }

@@ -1,6 +1,6 @@
 package sis.pousada.visao;
 
-import sis.pousada.dao.AcomodacaoJPA;
+import sis.pousada.service.AcomodacaoService;
 import sis.pousada.modelo.acomodacao.Acomodacao;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class FrmConsultaAcomodacao extends JInternalFrame {
     private final AcomodacaoTableModel modelo = new AcomodacaoTableModel();
     private final JTable tabela = new JTable(modelo);
 
-    private final AcomodacaoJPA acomodacaoJPA = new AcomodacaoJPA();
+    private final AcomodacaoService acomodacaoService = new AcomodacaoService();
 
     public FrmConsultaAcomodacao() {
         setTitle("Consulta de Acomodações");
@@ -62,7 +62,7 @@ public class FrmConsultaAcomodacao extends JInternalFrame {
 
     private void buscar() {
         try {
-            modelo.setAcomodacoes(acomodacaoJPA.listarPorLegenda(txtLegenda.getText()));
+            modelo.setAcomodacoes(acomodacaoService.listarPorLegenda(txtLegenda.getText()));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao consultar acomodações: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);

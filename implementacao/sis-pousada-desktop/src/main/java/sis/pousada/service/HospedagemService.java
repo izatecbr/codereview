@@ -1,41 +1,40 @@
 package sis.pousada.service;
 
-import sis.pousada.dao.HospedagemJPA;
-import sis.pousada.modelo.hospedagem.Duracao;
+import com.fasterxml.jackson.core.type.TypeReference;
+import sis.pousada.api.ApiClient;
 import sis.pousada.modelo.hospedagem.HospedagamStatus;
 import sis.pousada.modelo.hospedagem.Hospedagem;
-import sis.pousada.modelo.hospedagem.Hospede;
 import sis.pousada.modelo.hospedagem.UnidadeLocacao;
 
 import java.util.List;
+import java.util.Map;
 
 public class HospedagemService {
 
-    private static final List<HospedagamStatus> STATUS_RESERVAS = List.of(HospedagamStatus.RESERVADA);
-    private static final List<HospedagamStatus> STATUS_HOSPEDAGENS =
-            List.of(HospedagamStatus.HOSPEDADA, HospedagamStatus.FINALIZADA);
+    private static final String CAMINHO = "/api/hospedagens";
+    private static final String CAMINHO_RESERVAS = CAMINHO + "/reservas";
 
-    private final HospedagemJPA hospedagemJPA = new HospedagemJPA();
+    private final ApiClient api = ApiClient.instancia();
 
+    // Reserva e hospedagem têm endpoints de criação diferentes (o status é definido pela API).
     public Hospedagem incluir(Hospedagem hospedagem) {
-        prepararParaGravar(hospedagem);
-        return hospedagemJPA.incluir(hospedagem);
+        String caminho = hospedagem.getStatus() == HospedagamStatus.RESERVADA ? CAMINHO_RESERVAS : CAMINHO;
+        return api.post(caminho, hospedagem, Hospedagem.class);
     }
 
     public Hospedagem alterar(Hospedagem hospedagem) {
-        prepararParaGravar(hospedagem);
-        return hospedagemJPA.alterar(hospedagem);
+        return api.put(CAMINHO + "/" + hospedagem.getId(), hospedagem, Hospedagem.class);
     }
 
     public List<Hospedagem> listarReservas(String nomeHospede) {
-        return hospedagemJPA.listarPorHospede(nomeHospede, STATUS_RESERVAS);
+        return api.get(CAMINHO_RESERVAS, filtroNome(nomeHospede), new TypeReference<List<Hospedagem>>() { });
     }
 
     public List<Hospedagem> listarHospedagens(String nomeHospede) {
-        return hospedagemJPA.listarPorHospede(nomeHospede, STATUS_HOSPEDAGENS);
+        return api.get(CAMINHO, filtroNome(nomeHospede), new TypeReference<List<Hospedagem>>() { });
     }
 
-    // Só hospedagem de fato gera valor; reserva (e cancelada) fica com zero.
+    // Apenas prévia para a tela; quem grava o valor definitivo é a API.
     public double calcularValorTotal(Hospedagem hospedagem) {
         HospedagamStatus status = hospedagem.getStatus();
         boolean cobra = status == HospedagamStatus.HOSPEDADA || status == HospedagamStatus.FINALIZADA;
@@ -47,39 +46,7 @@ public class HospedagemService {
         return hospedagem.getDuracao().contarDias() * unidade.getValorDiaria();
     }
 
-    private void prepararParaGravar(Hospedagem hospedagem) {
-        validar(hospedagem);
-
-        if (hospedagem.getStatus() == HospedagamStatus.RESERVADA) {
-            hospedagem.setUnidadeLocacao(null);
-        }
-        hospedagem.setValorTotal(calcularValorTotal(hospedagem));
-    }
-
-    private void validar(Hospedagem hospedagem) {
-        if (hospedagem.getStatus() == null) {
-            throw new IllegalArgumentException("Informe o status.");
-        }
-
-        Hospede hospede = hospedagem.getHospede();
-        if (hospede == null || hospede.getId() <= 0 || hospede.getNome() == null || hospede.getNome().isBlank()) {
-            throw new IllegalArgumentException("Informe o hóspede.");
-        }
-
-        Duracao duracao = hospedagem.getDuracao();
-        if (duracao == null || duracao.getDataInicial() == null || duracao.getDataFinal() == null) {
-            throw new IllegalArgumentException("Informe a data inicial e a data final.");
-        }
-        if (!duracao.getDataFinal().isAfter(duracao.getDataInicial())) {
-            throw new IllegalArgumentException("A data final deve ser posterior à data inicial.");
-        }
-
-        boolean exigeUnidade = hospedagem.getStatus() == HospedagamStatus.HOSPEDADA
-                || hospedagem.getStatus() == HospedagamStatus.FINALIZADA;
-        UnidadeLocacao unidade = hospedagem.getUnidadeLocacao();
-        if (exigeUnidade && (unidade == null || unidade.getId() == null
-                || unidade.getNumero() == null || unidade.getNumero().isBlank())) {
-            throw new IllegalArgumentException("Informe a acomodação (ela precisa ter número cadastrado).");
-        }
+    private Map<String, String> filtroNome(String nomeHospede) {
+        return Map.of("hospede", nomeHospede == null ? "" : nomeHospede.trim());
     }
 }

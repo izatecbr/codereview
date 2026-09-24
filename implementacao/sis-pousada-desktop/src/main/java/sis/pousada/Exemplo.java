@@ -1,14 +1,12 @@
 package sis.pousada;
 
-import sis.pousada.dao.CadastroJPA;
 import sis.pousada.modelo.cadastro.Cadastro;
 import sis.pousada.modelo.cadastro.Celular;
 import sis.pousada.modelo.cadastro.Endereco;
-
-import java.sql.SQLException;
+import sis.pousada.service.CadastroService;
 
 public class Exemplo {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
 
         Cadastro cadastro = new Cadastro();
         cadastro.setNome("Izabelly");
@@ -34,8 +32,9 @@ public class Exemplo {
         cadastro.setEndereco(endereco);
         cadastro.setCelular(celular);
 
-        CadastroJPA repository = new CadastroJPA();
-        repository.incluir(cadastro);
+        CadastroService service = new CadastroService();
+        Cadastro criado = service.incluir(cadastro);
+        System.out.println("Cadastro criado pela API com o código " + criado.getId());
 
 
 

@@ -1,6 +1,6 @@
 package sis.pousada.visao;
 
-import sis.pousada.dao.AcomodacaoJPA;
+import sis.pousada.service.AcomodacaoService;
 import sis.pousada.modelo.acomodacao.Acomodacao;
 import sis.pousada.modelo.acomodacao.AcomodacaoTipo;
 
@@ -20,7 +20,7 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
     private final DefaultListModel<String> modeloItens = new DefaultListModel<>();
     private final JList<String> listaItens = new JList<>(modeloItens);
 
-    private final AcomodacaoJPA acomodacaoJPA = new AcomodacaoJPA();
+    private final AcomodacaoService acomodacaoService = new AcomodacaoService();
     private final Acomodacao acomodacaoEdicao;
 
     public FrmCadastroAcomodacao() {
@@ -141,11 +141,11 @@ public class FrmCadastroAcomodacao extends JInternalFrame {
             acomodacao.setItens(new ArrayList<>(java.util.Collections.list(modeloItens.elements())));
 
             if (acomodacaoEdicao == null) {
-                acomodacaoJPA.incluir(acomodacao);
+                acomodacaoService.incluir(acomodacao);
                 JOptionPane.showMessageDialog(this, "Acomodação salva com sucesso!");
                 limparCampos();
             } else {
-                acomodacaoJPA.alterar(acomodacao);
+                acomodacaoService.alterar(acomodacao);
                 JOptionPane.showMessageDialog(this, "Acomodação alterada com sucesso!");
                 dispose();
             }
