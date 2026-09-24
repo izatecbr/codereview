@@ -6,7 +6,7 @@ import sis.pousada.visao.FrmSplash;
 
 import javax.swing.*;
 
-public class Main {
+public class SisPousadaDesktopApi {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
