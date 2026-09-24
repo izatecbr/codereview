@@ -1,0 +1,7 @@
+HTTP - REST
+POST: inclusao
+PUT: alteracao
+GET: obter
+DELETE: excluir recursos
+
+cadastros, acomodocoes, hospedagens
