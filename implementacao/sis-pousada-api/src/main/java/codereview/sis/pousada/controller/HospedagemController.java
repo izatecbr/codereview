@@ -4,9 +4,11 @@ import codereview.sis.pousada.modelo.hospedagem.HospedagamStatus;
 import codereview.sis.pousada.modelo.hospedagem.Hospedagem;
 import codereview.sis.pousada.service.HospedagemService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -44,6 +47,10 @@ public class HospedagemController {
             }
             """;
 
+    private static final String DESCRICAO_FILTROS = "Filtros opcionais e combináveis: hospede (nome), cadastroId, "
+            + "dataInicial e dataFinal. O período retorna as estadias que sobrepõem o intervalo informado "
+            + "(pode enviar só dataInicial ou só dataFinal).";
+
     private final HospedagemService hospedagemService;
 
     public HospedagemController(HospedagemService hospedagemService) {
@@ -61,10 +68,16 @@ public class HospedagemController {
         return hospedagemService.incluir(reserva);
     }
 
-    @Operation(summary = "Listar reservas", description = "Filtra pelo nome do hóspede (contém, sem diferenciar maiúsculas).")
+    @Operation(summary = "Listar reservas", description = DESCRICAO_FILTROS)
     @GetMapping("/reservas")
-    public List<Hospedagem> listarReservas(@RequestParam(required = false, defaultValue = "") String hospede) {
-        return hospedagemService.listarReservas(hospede);
+    public List<Hospedagem> listarReservas(
+            @Parameter(description = "Nome do hóspede (contém)") @RequestParam(required = false, defaultValue = "") String hospede,
+            @Parameter(description = "Código do cadastro do hóspede") @RequestParam(required = false) Integer cadastroId,
+            @Parameter(description = "Início do período (yyyy-MM-dd)") @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+            @Parameter(description = "Fim do período (yyyy-MM-dd)") @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal) {
+        return hospedagemService.listarReservas(hospede, cadastroId, dataInicial, dataFinal);
     }
 
     @Operation(summary = "Criar hospedagem",
@@ -79,9 +92,15 @@ public class HospedagemController {
         return hospedagemService.incluir(hospedagem);
     }
 
-    @Operation(summary = "Listar hospedagens", description = "Hospedagens em andamento e finalizadas, filtradas pelo nome do hóspede.")
+    @Operation(summary = "Listar hospedagens", description = "Hospedagens em andamento e finalizadas. " + DESCRICAO_FILTROS)
     @GetMapping
-    public List<Hospedagem> listarHospedagens(@RequestParam(required = false, defaultValue = "") String hospede) {
-        return hospedagemService.listarHospedagens(hospede);
+    public List<Hospedagem> listarHospedagens(
+            @Parameter(description = "Nome do hóspede (contém)") @RequestParam(required = false, defaultValue = "") String hospede,
+            @Parameter(description = "Código do cadastro do hóspede") @RequestParam(required = false) Integer cadastroId,
+            @Parameter(description = "Início do período (yyyy-MM-dd)") @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+            @Parameter(description = "Fim do período (yyyy-MM-dd)") @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal) {
+        return hospedagemService.listarHospedagens(hospede, cadastroId, dataInicial, dataFinal);
     }
 }

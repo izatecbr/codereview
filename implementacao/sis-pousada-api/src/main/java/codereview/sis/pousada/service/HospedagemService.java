@@ -13,6 +13,7 @@ import codereview.sis.pousada.repository.HospedagemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -59,14 +60,25 @@ public class HospedagemService {
                 .orElseThrow(() -> new NoSuchElementException("Hospedagem não encontrada."));
     }
 
+    // Todos os filtros são opcionais. O período retorna estadias que sobrepõem [dataInicial, dataFinal].
     @Transactional(readOnly = true)
-    public List<Hospedagem> listarReservas(String nomeHospede) {
-        return hospedagemRepository.listarPorHospede(normalizar(nomeHospede), STATUS_RESERVAS);
+    public List<Hospedagem> listarReservas(String nomeHospede, Integer cadastroId,
+                                           LocalDate dataInicial, LocalDate dataFinal) {
+        return listar(nomeHospede, cadastroId, dataInicial, dataFinal, STATUS_RESERVAS);
     }
 
     @Transactional(readOnly = true)
-    public List<Hospedagem> listarHospedagens(String nomeHospede) {
-        return hospedagemRepository.listarPorHospede(normalizar(nomeHospede), STATUS_HOSPEDAGENS);
+    public List<Hospedagem> listarHospedagens(String nomeHospede, Integer cadastroId,
+                                              LocalDate dataInicial, LocalDate dataFinal) {
+        return listar(nomeHospede, cadastroId, dataInicial, dataFinal, STATUS_HOSPEDAGENS);
+    }
+
+    private List<Hospedagem> listar(String nomeHospede, Integer cadastroId, LocalDate dataInicial,
+                                    LocalDate dataFinal, List<HospedagamStatus> status) {
+        if (dataInicial != null && dataFinal != null && dataFinal.isBefore(dataInicial)) {
+            throw new IllegalArgumentException("A data final do filtro não pode ser anterior à data inicial.");
+        }
+        return hospedagemRepository.listar(normalizar(nomeHospede), status, cadastroId, dataInicial, dataFinal);
     }
 
     // Só hospedagem de fato gera valor; reserva (e cancelada) fica com zero.

@@ -1,0 +1,1256 @@
+{
+  "info": {
+    "name": "Sis Pousada API",
+    "description": "API do sistema de pousada (Spring Boot).\n\nDocumentação Swagger: http://localhost:8080/swagger-ui.html\n\nVariáveis da coleção: baseUrl, cadastroId (cadastro existente, padrão 1), acomodacaoId (acomodação existente, padrão 2), nomeHospede, dataInicial, dataFinal (usadas nos filtros).\n\nOrdem sugerida: 1. Cadastro > 2. Acomodação > 3. Hospedagem > 4. Listagem com filtros (destaque) > 5. Erros.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "cadastroId",
+      "value": "1"
+    },
+    {
+      "key": "acomodacaoId",
+      "value": "2"
+    },
+    {
+      "key": "cadastroCriadoId",
+      "value": "0"
+    },
+    {
+      "key": "acomodacaoCriadaId",
+      "value": "0"
+    },
+    {
+      "key": "nomeHospede",
+      "value": "gleyson"
+    },
+    {
+      "key": "dataInicial",
+      "value": "2026-09-26"
+    },
+    {
+      "key": "dataFinal",
+      "value": "2026-09-27"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Cadastro",
+      "description": "Clientes / hóspedes. Nome e CPF/CNPJ são obrigatórios.",
+      "item": [
+        {
+          "name": "Criar cadastro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"cadastroCriadoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros"
+              ]
+            },
+            "description": "Cria um cadastro. O script de teste guarda o id criado em {{cadastroCriadoId}} para usar em \"Alterar\".",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria da Silva\",\n  \"cpfCnpj\": \"123.456.789-00\",\n  \"documento\": \"RG 1234567\",\n  \"aniversario\": \"1990-05-15\",\n  \"email\": \"maria@email.com\",\n  \"endereco\": {\n    \"logradouro\": \"Rua das Flores\",\n    \"numero\": \"123\",\n    \"complemento\": \"Apto 101\",\n    \"bairro\": \"Centro\",\n    \"cidade\": \"São Paulo\",\n    \"uf\": \"SP\",\n    \"cep\": 12345678,\n    \"ibge\": 3550308\n  },\n  \"celular\": {\n    \"numero\": 11987654321,\n    \"whatsapp\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Alterar cadastro (o criado acima)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros/{{cadastroCriadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros",
+                "{{cadastroCriadoId}}"
+              ]
+            },
+            "description": "Altera o cadastro criado no passo anterior. Execute \"Criar cadastro\" antes. O id vem da URL; o id do corpo é ignorado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria da Silva (alterada)\",\n  \"cpfCnpj\": \"123.456.789-00\",\n  \"documento\": \"RG 1234567\",\n  \"aniversario\": \"1990-05-15\",\n  \"email\": \"maria@email.com\",\n  \"endereco\": {\n    \"logradouro\": \"Rua das Flores\",\n    \"numero\": \"123\",\n    \"complemento\": \"Apto 101\",\n    \"bairro\": \"Centro\",\n    \"cidade\": \"São Paulo\",\n    \"uf\": \"SP\",\n    \"cep\": 12345678,\n    \"ibge\": 3550308\n  },\n  \"celular\": {\n    \"numero\": 11987654321,\n    \"whatsapp\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Buscar cadastro por código",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros/{{cadastroId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros",
+                "{{cadastroId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar cadastros",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar cadastros por nome",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros?nome={{nomeHospede}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros"
+              ],
+              "query": [
+                {
+                  "key": "nome",
+                  "value": "{{nomeHospede}}",
+                  "description": "Contém, sem diferenciar maiúsculas"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Acomodação",
+      "description": "Suítes, quartos, casas, chalés e glampings. Tipos: SUITE, QUARTO, CASA, CHALE, GLAMPING. Legenda, número, descrição e tipo são obrigatórios.",
+      "item": [
+        {
+          "name": "Criar acomodação",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"acomodacaoCriadaId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes"
+              ]
+            },
+            "description": "Cria uma acomodação. O script de teste guarda o id criado em {{acomodacaoCriadaId}} para usar em \"Alterar\".",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"legenda\": \"Suite Master\",\n  \"numero\": \"235\",\n  \"descricao\": \"Suíte com vista para o mar\",\n  \"valorDiaria\": 160,\n  \"tipo\": \"SUITE\",\n  \"itens\": [\n    \"Ar-condicionado\",\n    \"TV\",\n    \"Frigobar\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Alterar acomodação (a criada acima)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes/{{acomodacaoCriadaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes",
+                "{{acomodacaoCriadaId}}"
+              ]
+            },
+            "description": "Altera a acomodação criada no passo anterior. Execute \"Criar acomodação\" antes.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"legenda\": \"Suite Master (alterada)\",\n  \"numero\": \"235\",\n  \"descricao\": \"Suíte com vista para o mar\",\n  \"valorDiaria\": 160,\n  \"tipo\": \"SUITE\",\n  \"itens\": [\n    \"Ar-condicionado\",\n    \"TV\",\n    \"Frigobar\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Buscar acomodação por código",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes/{{acomodacaoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes",
+                "{{acomodacaoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar acomodações",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar acomodações por legenda",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes?legenda=suite",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes"
+              ],
+              "query": [
+                {
+                  "key": "legenda",
+                  "value": "suite",
+                  "description": "Contém, sem diferenciar maiúsculas"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Hospedagem - criar reserva e hospedagem",
+      "description": "Reserva NÃO usa acomodação (status RESERVADA, valor total 0). Hospedagem exige a acomodação em unidadeLocacao.id (status HOSPEDADA, valor total = dias x diária). Basta informar os códigos: nome do hóspede e legenda/número/diária da unidade são preenchidos pela API.",
+      "item": [
+        {
+          "name": "Criar reserva (sem acomodação)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Valor total zerado\", function () { pm.expect(pm.response.json().valorTotal).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede\": {\n    \"id\": {{cadastroId}}\n  },\n  \"duracao\": {\n    \"dataInicial\": \"2026-10-01\",\n    \"dataFinal\": \"2026-10-04\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Criar hospedagem (com acomodação)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Valor total calculado\", function () { pm.expect(pm.response.json().valorTotal).to.be.above(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede\": {\n    \"id\": {{cadastroId}}\n  },\n  \"unidadeLocacao\": {\n    \"id\": {{acomodacaoId}}\n  },\n  \"duracao\": {\n    \"dataInicial\": \"2026-10-01\",\n    \"dataFinal\": \"2026-10-04\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. LISTAGEM DE HOSPEDAGENS - filtros por data e cadastro (DESTAQUE)",
+      "description": "GET /api/hospedagens\n\nParâmetros opcionais e combináveis:\n- cadastroId: código do cadastro do hóspede\n- dataInicial / dataFinal (yyyy-MM-dd): retorna as estadias que SOBREPÕEM o período. Pode enviar só dataInicial (estadias que terminam nessa data ou depois) ou só dataFinal (estadias que começam nessa data ou antes)\n- hospede: parte do nome do hóspede\n\nSem filtros, lista todas as hospedagens (HOSPEDADA e FINALIZADA). O mesmo conjunto de filtros vale para GET /api/hospedagens/reservas.\n\nAjuste as variáveis {{cadastroId}}, {{dataInicial}}, {{dataFinal}} e {{nomeHospede}} da coleção para demonstrar.",
+      "item": [
+        {
+          "name": "Listar todas (sem filtros)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Por cadastro (cadastroId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?cadastroId={{cadastroId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "cadastroId",
+                  "value": "{{cadastroId}}",
+                  "description": "Código do cadastro do hóspede"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Por periodo (dataInicial + dataFinal)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?dataInicial={{dataInicial}}&dataFinal={{dataFinal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "{{dataInicial}}",
+                  "description": "Início do período (yyyy-MM-dd)"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "{{dataFinal}}",
+                  "description": "Fim do período (yyyy-MM-dd)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Por cadastro + periodo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?cadastroId={{cadastroId}}&dataInicial={{dataInicial}}&dataFinal={{dataFinal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "cadastroId",
+                  "value": "{{cadastroId}}",
+                  "description": "Código do cadastro do hóspede"
+                },
+                {
+                  "key": "dataInicial",
+                  "value": "{{dataInicial}}",
+                  "description": "Início do período (yyyy-MM-dd)"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "{{dataFinal}}",
+                  "description": "Fim do período (yyyy-MM-dd)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Periodo outubro/2026 (pega as criadas nos exemplos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?dataInicial=2026-10-01&dataFinal=2026-10-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-10-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "So a partir de uma data (dataInicial)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?dataInicial={{dataInicial}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "{{dataInicial}}",
+                  "description": "Início do período (yyyy-MM-dd)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "So ate uma data (dataFinal)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?dataFinal={{dataFinal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "dataFinal",
+                  "value": "{{dataFinal}}",
+                  "description": "Fim do período (yyyy-MM-dd)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Por nome do hospede",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?hospede={{nomeHospede}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "hospede",
+                  "value": "{{nomeHospede}}",
+                  "description": "Nome do hóspede (contém, sem diferenciar maiúsculas)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "TODOS os filtros (ligue/desligue os parametros)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?cadastroId={{cadastroId}}&dataInicial={{dataInicial}}&dataFinal={{dataFinal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "cadastroId",
+                  "value": "{{cadastroId}}",
+                  "description": "Código do cadastro do hóspede"
+                },
+                {
+                  "key": "dataInicial",
+                  "value": "{{dataInicial}}",
+                  "description": "Início do período (yyyy-MM-dd)"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "{{dataFinal}}",
+                  "description": "Fim do período (yyyy-MM-dd)"
+                },
+                {
+                  "key": "hospede",
+                  "value": "{{nomeHospede}}",
+                  "description": "Nome do hóspede (contém, sem diferenciar maiúsculas)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Marque/desmarque os parâmetros na aba Params para combinar os filtros ao vivo."
+          }
+        },
+        {
+          "name": "Reservas por cadastro + periodo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Resposta e uma lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });",
+                  "console.log(\"Registros retornados:\", pm.response.json().length);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens/reservas?cadastroId={{cadastroId}}&dataInicial=2026-10-01&dataFinal=2026-10-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens",
+                "reservas"
+              ],
+              "query": [
+                {
+                  "key": "cadastroId",
+                  "value": "{{cadastroId}}",
+                  "description": "Código do cadastro do hóspede"
+                },
+                {
+                  "key": "dataInicial",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-10-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "ERRO: dataFinal anterior a dataInicial (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens?dataInicial=2026-12-31&dataFinal=2026-09-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-12-31"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-09-01"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Casos de erro (400 / 404)",
+      "description": "Mostram o formato de erro (ProblemDetail) devolvido pela API.",
+      "item": [
+        {
+          "name": "Cadastro sem nome (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpfCnpj\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cadastro inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cadastros/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cadastros",
+                "99999"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Acomodação sem tipo (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"legenda\": \"X\",\n  \"numero\": \"1\",\n  \"descricao\": \"Y\",\n  \"valorDiaria\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Acomodação com tipo inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/acomodacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "acomodacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"legenda\": \"X\",\n  \"numero\": \"1\",\n  \"descricao\": \"Y\",\n  \"valorDiaria\": 100,\n  \"tipo\": \"CASTELO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reserva com hóspede inexistente (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede\": {\n    \"id\": 99999\n  },\n  \"duracao\": {\n    \"dataInicial\": \"2026-10-01\",\n    \"dataFinal\": \"2026-10-04\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Hospedagem sem acomodação (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede\": { \"id\": {{cadastroId}} },\n  \"duracao\": { \"dataInicial\": \"2026-10-01\", \"dataFinal\": \"2026-10-04\" }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Data final antes da inicial (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hospedagens/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hospedagens",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede\": { \"id\": {{cadastroId}} },\n  \"duracao\": { \"dataInicial\": \"2026-10-04\", \"dataFinal\": \"2026-10-01\" }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
